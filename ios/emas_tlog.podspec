@@ -6,6 +6,7 @@ Pod::Spec.new do |s|
   s.name             = 'emas_tlog'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter project.'
+  s.static_framework = true #静态库
   s.description      = <<-DESC
 A new Flutter project.
                        DESC

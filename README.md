@@ -27,7 +27,7 @@
 #####```flutter```配置：
 
 ```
-  emas_tlog: ^0.0.1
+  emas_tlog: ^0.0.2
 ```
 
 初始化：
@@ -177,6 +177,7 @@ allprojects {
 ```
 
 说明需要 配置 ```tools:replace="android:label"```
+
 #####iOS 的配置说明
 1、在```Flutter```项目的```iOS```端的```Podfile```中添加如下索引库地址：
 ```
@@ -199,3 +200,26 @@ source "https://github.com/aliyun/aliyun-specs.git"
 <string>Main</string>
 ```
 3、在```iOS```端项目```Build Setting```中，将```Allow Non-modular Includes In Framework Modules```设置为```YES```
+#####iOS报错情况解决：
+```问题1：```
+```
+Flutter: target has transitive dependencies that include statically linked binariesxxxx
+```
+```解决问题1：```
+```
+target 'Runner' do
+#   use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+```
+```注释掉use_frameworks! ```
+如果存在其他含swift文件的插件的情况，这会造成新问题(Swift与OC汇编找不到文件)
+故，以上解决办法不可取，需要保留```use_frameworks!```加入下面的代码即可：
+```
+pre_install do |installer|
+  # workaround for https://github.com/CocoaPods/CocoaPods/issues/3289 静态库
+  Pod::Installer::Xcode::TargetValidator.send(:define_method, :verify_no_static_framework_transitive_dependencies) {}
+end
+```
